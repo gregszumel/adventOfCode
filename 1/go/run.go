@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
-    "strconv"
+
+	"golang.org/x/exp/slices"
 )
 
 /*
@@ -75,6 +77,24 @@ Find the Elf carrying the most Calories. How many total Calories is that
 Elf carrying?
 
 To begin, get your puzzle input.
+
+
+======================== ======================== ======================== ========================
+PART 2
+
+By the time you calculate the answer to the Elves' question, they've already
+realized that the Elf carrying the most Calories of food might eventually run
+out of snacks.
+
+To avoid this unacceptable situation, the Elves would instead like to know the
+total Calories carried by the top three Elves carrying the most Calories. That
+way, even if one of those Elves runs out of snacks, they still have two backups.
+
+In the example above, the top three Elves are the fourth Elf (with 24000
+Calories), then the third Elf (with 11000 Calories), then the fifth Elf
+(with 10000 Calories). The sum of the Calories carried by these three elves
+is 45000.
+
 */
 
 
@@ -91,8 +111,16 @@ func getNewMax(prevMax, potentialMax int)int {
     return potentialMax
 }
 
+// Docstring?
+func getNewMaxes(prevMaxes []int, potentialMax int) []int{
+    newMaxes := make([]int, 4)
+    copy(newMaxes, prevMaxes)
+    newMaxes[3] = potentialMax
+    slices.Sort(newMaxes)
+    return newMaxes[1:]
+}
+
 func main() {
-    fmt.Println("hello world")
     dat, err := os.ReadFile("input.txt")
     check(err)
     
@@ -100,6 +128,7 @@ func main() {
     sum := 0
     prevMax := 0
 
+    /// Part 1
     for i:=0; i<len(rations); i++ {
         if rations[i] == "" {
             prevMax = getNewMax(prevMax, sum)
@@ -113,7 +142,30 @@ func main() {
             sum = sum + rationValue
         }
     }
-    fmt.Println(prevMax)
+    fmt.Println("Part 1: ", prevMax)
+
+
+    // Part 2
+    maxes := make([]int, 3)
+
+    for i:=0; i<len(rations); i++ {
+        if rations[i] == "" {
+            maxes = getNewMaxes(maxes, sum)
+            sum = 0
+        } else {
+            rationValue, err := strconv.Atoi(rations[i])
+            if err != nil {
+                fmt.Println(err)
+                break
+            }
+            sum = sum + rationValue
+        }
+    }
+    totalSum:=0
+    for i:=0; i <len(maxes); i++{
+        totalSum += maxes[i]
+    }
+    fmt.Println("Part 2: ", totalSum)
 }
 
 
