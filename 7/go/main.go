@@ -149,7 +149,24 @@ func part1(parent *DirNode)int {
 
 
 func part2(parent *DirNode)int {
-    return 0
+    neededToDelete := 45717263 - (70000000 - 30000000)
+    filtered := make([]int, 0)
+
+    for _, child := range parent.dirs {
+        if child.size >= neededToDelete {
+            minFromChild := part2(child)
+            filtered = append(filtered, minFromChild)
+        }
+    }
+
+    filtered = append(filtered, parent.size)
+    lowest := 70000000
+    for _, potentialMin := range filtered {
+        if potentialMin < lowest {
+            lowest = potentialMin
+        }
+    }
+    return lowest
 }
 
 func main() {
@@ -167,5 +184,7 @@ func main() {
     fmt.Println(getSize(rootDirNode))
     fmt.Println(rootDirNode.size)
     fmt.Println(part1(rootDirNode))
+    fmt.Println("needed:", 45717263 - (70000000 - 30000000) )
+    fmt.Println(part2(rootDirNode))
 }
 
