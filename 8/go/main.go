@@ -92,6 +92,32 @@ func getMaxTrees(trees [][]int) [][]int {
 }
 
 
+func getNumTreesVisible(trees [][]int, i, j int) int {
+    up, down, left, right := 0, 0, 0, 0
+    height := trees[i][j]
+    for i - up > 0 {
+        up++;
+        if height <= trees[i-up][j] { break } 
+    }
+
+    for i + down < len(trees)-1 {
+        down++;
+        if height <= trees[i+down][j] { break } 
+    }
+
+    for j + right < len(trees[0])-1 {
+        right++;
+        if height <= trees[i][j+right] { break } 
+    }
+
+    for j - left > 0 {
+        left++
+        if height <= trees[i][j-left] { break }
+    }
+
+    return up * down * left * right
+}
+
 
 func main() {
     dat, err := os.ReadFile("input.txt")
@@ -121,6 +147,15 @@ func main() {
     fmt.Println(sum)
     fmt.Println(visibleTrees)
     fmt.Println(trees)
-
+    maxScenicScore := 0
+    for i := 0; i < len(trees); i++ {
+        for j := 0; j < len(trees[0]); j++ {
+            score := getNumTreesVisible(trees, i, j)
+            if score > maxScenicScore {
+                maxScenicScore = score 
+            }
+        }
+    }
+    fmt.Println(maxScenicScore)
 }
 
